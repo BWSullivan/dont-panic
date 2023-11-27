@@ -1,6 +1,7 @@
 import detector
 import tkinter
 import os
+from datetime import datetime, timedelta
 from langchain.llms import GPT4All
 from langchain import PromptTemplate, LLMChain
 
@@ -9,9 +10,11 @@ def chatbot(chain, prompt = None, feeling = None):
     if prompt: 
         return chain.run(prompt)
     elif feeling == "sad":
-        return chain.run("You've noticed that the user seems to be sad. Ask them what you can do to support them.")
+        return chain.run("I am sad. Ask me how you can help. ")
+    elif feeling == "tired":
+        return chain.run("I have been working for a long time. Ask me how you can help. ")
     elif feeling == "angry":
-        return chain.run("You've noticed that the user seems to be Angry. Ask them what you can do to support them.")
+        return chain.run("I am angry. Ask me how you can help. ")
     elif feeling == "happy":
         return "You seem really happy lately! Whatever the hell you're doing, keep it up."
 
@@ -57,14 +60,18 @@ def window(feeling):
     root.mainloop()
 
 
-def main():
+def main(): 
+    init_time = datetime.now()
+    time_thr = 15 #seconds
+
     # run the detector
-     
     # main_emotion is a string containing the most used emotion at our threshold. We may want this in a loop but thats for later. 
     threshold = 5
     while (True): 
         # return to main with emotion after like 10-20 of the same emotions
-        main_emotion = detector.detector(threshold) 
+        main_emotion = detector.detector(threshold, init_time, time_thr) 
+        if main_emotion=="tired": 
+            init_time = datetime.now()
         # then prompt the user after it sees enough emotions determined by threshold
         window(main_emotion)
 
