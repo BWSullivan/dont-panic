@@ -1,48 +1,72 @@
 import detector
 import tkinter
+import os
+from langchain.llms import GPT4All
+from langchain import PromptTemplate, LLMChain
 
-def chatbot(user_in_text, feeling):
+def chatbot(chain, prompt = None, feeling = None):
     # this is where the AI stuff would happen if it didn't cost money
-    if feeling == "sad":
-        return "I've noticed you seem to show the symptons of being sad. May I suggest some things to cheer you up?"
+    if prompt: 
+        return chain.run(prompt)
+    elif feeling == "sad":
+        return chain.run("You've noticed that the user seems to be sad. Ask them what you can do to support them.")
     elif feeling == "angry":
-        return "You seem to be mad about something. May I suggest some things to calm you down?"
+        return chain.run("You've noticed that the user seems to be Angry. Ask them what you can do to support them.")
     elif feeling == "happy":
         return "You seem really happy lately! Whatever the hell you're doing, keep it up."
 
 def window(feeling):
+    # Creating LLM, change PATH. 
+    PATH = 'C:/Users/28550/AppData/Local/nomic.ai/GPT4All/gpt4all-falcon-q4_0.gguf'
+    llm = GPT4All(model=PATH, verbose=True)
+    prompt = PromptTemplate(input_variables = ['action'], 
+                            template = """
+                            ### Instruction: 
+                            You are an emotional support chatbot. The prompt below is a question to answer, 
+                            a task to complete, or a conversation to respond to; 
+                            decide which and write an appropritate response. 
+                            ### Prompt: 
+                            {action}
+                            ### Response: 
+                            The response should be in first person from the perspective up an emotional support chatbot. 
+                            Return a response with no leading spaces.
+                            """)
+    
+    chain = LLMChain(prompt=prompt, llm=llm)
+
     root = tkinter.Tk()
     root.title("Chatbot")
-
+    
     # Create the chatbot's text area
     text_area = tkinter.Text(root, bg="white", width=50, height=20)
     text_area.pack()
     input_field = tkinter.Entry(root, width=50)
     input_field.pack()
-    user_input = "This is where you'd prompt the AI"
-    response = chatbot(user_input, feeling)
+    response = chatbot(chain, None, feeling)
     text_area.insert(tkinter.END, f"Chatbot: {response}\n") 
 
     send_button = tkinter.Button(root, text="Send", command=lambda: send_message())
     send_button.pack()
 
     def send_message():
-        text_area.insert(tkinter.END, f"Chatbot: {response}\n")
-        user_input = input_field.get()
+        prompt = input_field.get()
         input_field.delete(0, tkinter.END)
-        response = chatbot(user_input, feeling)
-        text_area.insert(tkinter.END, f"User: {user_input}\n")
+        response = chatbot(chain, prompt=prompt, feeling=feeling)
+        text_area.insert(tkinter.END, f"User: {prompt}\n")
         text_area.insert(tkinter.END, f"Chatbot: {response}\n")
     root.mainloop()
 
+
 def main():
     # run the detector
+     
     # main_emotion is a string containing the most used emotion at our threshold. We may want this in a loop but thats for later. 
     threshold = 5
-    # return to main with emotion after like 10-20 of the same emotions
-    main_emotion = detector.detector(threshold) 
-    # then prompt the user after it sees enough emotions determined by threshold
-    window(main_emotion)
+    while (True): 
+        # return to main with emotion after like 10-20 of the same emotions
+        main_emotion = detector.detector(threshold) 
+        # then prompt the user after it sees enough emotions determined by threshold
+        window(main_emotion)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,11 @@
+prefix=C:/dev/gpt4all/build-gpt4all-chat-Desktop_Qt_6_5_1_MSVC2019_64bit-Release/install
+exec_prefix=C:/dev/gpt4all/build-gpt4all-chat-Desktop_Qt_6_5_1_MSVC2019_64bit-Release/install
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: fmt
+Description: A modern formatting library
+Version: 10.0.0
+Libs: -L${libdir} -lfmt
+Cflags: -I${includedir}
+
