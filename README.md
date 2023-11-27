@@ -12,10 +12,13 @@ User-friendly interface with easy navigation and interaction.
 # Installation
 Clone the repository: git clone https://github.com/BWSullivan/dont-panic
 Navigate to the project directory: cd dont-panic
-Install dependencies: [Instructions for dependency installation]
-Run the application: [Instructions for running the app]
+Install dependencies:
+1) cv2
+2) langchain
+3) tkinter
+4) Install gpt4all GUI from their website: https://gpt4all.io/index.html
+Run the application: `python3 main.py`
 
 # Usage
-Ensure your device's camera is enabled.
-Open the application.
-Follow the on-screen instructions to start the emotion detection and receive suggestions.
+1) Ensure your device's camera is enabled.
+2) Run the application.
